@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Main extends Application {
 
     /** Constant variables for convenient use */
-    private final String rawDataLocation = "resources/spreadsheets";
+    private final String rawDataLocation = "C:\\Users\\calum\\OneDrive\\Documents\\Trading\\Atkex Logger\\src\\main\\resources\\spreadsheets";
 
     ArrayList<String> markets = new ArrayList<>();
 
@@ -35,10 +35,6 @@ public class Main extends Application {
                         loadMainPane()
                 )
         );
-
-
-
-
 
         stage.show();
     }

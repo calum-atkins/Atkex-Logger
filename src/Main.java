@@ -4,15 +4,29 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main extends Application {
+
+    /** Constant variables for convenient use */
+    private final String rawDataLocation = "resources/spreadsheets";
+
+    ArrayList<String> markets = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws Exception {
         System.out.println("Initialising..");
         stage.setTitle("Atkex");
         stage.setResizable(true);
+
+        //Get data from spreadsheets (folder)
+        File directoryP = new File(rawDataLocation);
+        String contents[] = directoryP.list();
+        for (int i = 0; i < contents.length; i++) {
+            markets.add(contents[i]);
+        }
 
 
         System.out.println("Displaying UI.");
@@ -21,6 +35,11 @@ public class Main extends Application {
                         loadMainPane()
                 )
         );
+
+
+
+
+
         stage.show();
     }
 
@@ -47,6 +66,8 @@ public class Main extends Application {
         mainPane.setPrefHeight(800);
         mainPane.setPrefWidth(1200);
         MainController mainController = loader.getController();
+
+        mainController.setMarkets(markets);
 
         return mainPane;
     }

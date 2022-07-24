@@ -1,9 +1,6 @@
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -26,6 +23,9 @@ public class MainController implements Initializable {
     Label lblLabel;
 
     @FXML
+    DatePicker dpiOrderDate;
+
+    @FXML
     Button btnAdd;
 
     @FXML
@@ -36,6 +36,15 @@ public class MainController implements Initializable {
     TextField txtStopLossPrice;
     @FXML
     TextField txtTakeProfitPrice;
+    @FXML
+    TextField txtStopLossProfit;
+    @FXML
+    TextField txtTakeProfitProfit;
+    @FXML
+    TextField txtOrderTime;
+
+    @FXML
+    TextArea txtDescription;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,22 +73,24 @@ public class MainController implements Initializable {
             //Assign values to object
             Map<String, Object[]> data = new HashMap<String, Object[]>();
             data.put("1", new Object[] {
-                    txtUnits.getText().toString(),
+                    txtUnits.getText(),
                     sideCombobox.getSelectionModel().getSelectedItem().toString(),
-                    txtStartPrice.getText().toString(),
-                    txtStopLossPrice.getText().toString(),
-                    txtTakeProfitPrice.getText().toString(),
-                    "=C10+A2",
-                    0,
-                    "SL Profit",
-                    "TP Profit",
-                    "NA",
+                    txtStartPrice.getText(),
+                    txtStopLossPrice.getText(),
+                    txtTakeProfitPrice.getText(),
+                    "=",
+                    "=",
+                    txtStopLossProfit.getText(),
+                    txtTakeProfitProfit.getText(),
+                    "Open",
+                    dpiOrderDate.toString(),
+                    txtOrderTime.getText(),
                     "Date",
-                    "Settled",
-                    "Duration",
-                    "Pips pl",
-                    "Profit",
-                    "Desc"
+                    "Time",
+                    "=",
+                    "=",
+                    "=",
+                    txtDescription.getText()
             });
 
             // Set to Iterate and add rows into XLS file
@@ -99,13 +110,34 @@ public class MainController implements Initializable {
                 for (Object obj : objArr) {
                     Cell cell = row.createCell(cellnum++);
                     if(obj.toString().startsWith("=")) {
-                        String formula = obj.toString().substring(1);
-                        System.out.println(formula);
-                        cell.setCellFormula(formula);
-
-//                        XSSFFormulaEvaluator formulaEvaluator =
-//                                myWorkBook.getCreationHelper().createFormulaEvaluator();
-//                        formulaEvaluator.evaluateFormulaCell(cell);
+                        //String formula = obj.toString().substring(1);
+                        switch (cellnum) {
+                            case 6 :
+                                if (sideCombobox.getSelectionModel().getSelectedItem().toString().equals("Long")) {
+                                    cell.setCellFormula(txtStopLossPrice.getText() + "-" + txtStartPrice.getText());
+                                } else {
+                                    cell.setCellFormula(txtStartPrice.getText() + "-" + txtStopLossPrice.getText());
+                                }
+                                break;
+                            case 7:
+                                if (sideCombobox.getSelectionModel().getSelectedItem().toString().equals("Long")) {
+                                    cell.setCellFormula(txtTakeProfitPrice.getText() + "-" + txtStartPrice.getText());
+                                } else {
+                                    cell.setCellFormula(txtStartPrice.getText() + "-" + txtTakeProfitPrice.getText());
+                                }
+                                break;
+                            case 15:
+                                //cell.setCellFormula("DAYS(M" + rownum + "," + "K" + rownum + ")");
+                                System.out.println("Date");
+                                //cell.setCellFormula(formula);
+                                break;
+                            case 16:
+                                cell.setCellFormula("IF(J" + rownum + "=\"SL\",F" + rownum + ",IF(J" + rownum + "=\"TP\",G" + rownum + ",\"Open\"))");
+                                break;
+                            case 17:
+                                cell.setCellFormula("IF(J" + rownum + "=\"SL\",H" + rownum + ",IF(J" + rownum + "=\"TP\",I" + rownum + ",\"Open\"))");
+                                break;
+                        }
                     }
 
                     if (obj instanceof String) {
